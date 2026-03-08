@@ -267,6 +267,13 @@ export default function Reader() {
           Next <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
+      {/* Achievement unlock overlay */}
+      {unlockedAchievements.length > 0 && (
+        <AchievementUnlock
+          achievements={unlockedAchievements}
+          onDone={() => setUnlockedAchievements([])}
+        />
+      )}
     </div>
   );
 }
