@@ -184,7 +184,7 @@ export default function Reader() {
       </div>
 
       {/* Page content */}
-      <div className="relative min-h-[400px]" style={{ perspective: "1200px" }}>
+      <div className="relative min-h-[400px]" style={{ perspective: "1200px" }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentIndex}
