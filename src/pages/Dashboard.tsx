@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
-import { BookOpen, Flame, Trophy, Zap, ArrowRight } from "lucide-react";
+import { BookOpen, Trophy, Zap, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LEVEL_NAMES } from "@/types/learning";
 import type { Profile, LeaderboardEntry } from "@/types/learning";
+import StreakCalendar from "@/components/StreakCalendar";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -77,25 +78,34 @@ export default function Dashboard() {
 
         <Card className="border-border/50">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--streak) / 0.1)" }}>
-              <Flame className="h-5 w-5" style={{ color: "hsl(var(--streak))" }} />
+            <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-muted">
+              <BookOpen className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{profile?.streak_days || 0}</p>
-              <p className="text-xs text-muted-foreground">Day Streak</p>
+              <p className="text-2xl font-bold">{profile?.total_pages_completed || 0}</p>
+              <p className="text-xs text-muted-foreground">Pages Done</p>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-border/50">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--xp) / 0.1)" }}>
-              <BookOpen className="h-5 w-5" style={{ color: "hsl(var(--xp))" }} />
+            <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-muted">
+              <BookOpen className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{profile?.total_pages_completed || 0}</p>
-              <p className="text-xs text-muted-foreground">Pages Done</p>
+              <p className="text-2xl font-bold">{profile?.total_exercises_completed || 0}</p>
+              <p className="text-xs text-muted-foreground">Exercises</p>
             </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Streak Calendar */}
+      <motion.div variants={item}>
+        <Card className="border-border/50">
+          <CardContent className="p-5">
+            <StreakCalendar />
           </CardContent>
         </Card>
       </motion.div>
