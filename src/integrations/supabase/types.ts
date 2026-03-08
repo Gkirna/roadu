@@ -393,6 +393,7 @@ export type Database = {
         Args: { p_answer: string; p_exercise_id: string; p_user_id: string }
         Returns: boolean
       }
+      update_streak: { Args: { p_user_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
