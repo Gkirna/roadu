@@ -13,6 +13,7 @@ import Reader from "./pages/Reader";
 import ProgressPage from "./pages/Progress";
 import Leaderboard from "./pages/Leaderboard";
 import AITutor from "./pages/AITutor";
+import Achievements from "./pages/Achievements";
 import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -42,6 +43,7 @@ function ProtectedRoutes() {
         <Route path="/book/:bookId" element={<BookChapters />} />
         <Route path="/chapter/:chapterId" element={<Reader />} />
         <Route path="/progress" element={<ProgressPage />} />
+        <Route path="/achievements" element={<Achievements />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/tutor" element={<AITutor />} />
         <Route path="/profile" element={<ProfilePage />} />
