@@ -81,10 +81,18 @@ export default function Reader() {
       await supabase.rpc("complete_page", { p_user_id: user.id, p_page_id: currentPage.id });
       setCompleted((prev) => new Set(prev).add(currentPage.id));
       toast.success("+5 XP ⚡", { description: "Page completed!" });
+      // Check for new achievements
+      const newAch = await checkAndAwardAchievements();
+      if (newAch.length > 0) setUnlockedAchievements(newAch);
     } catch {
       toast.error("Failed to save progress");
     }
   };
+
+  const handleExerciseAchievementCheck = useCallback(async () => {
+    const newAch = await checkAndAwardAchievements();
+    if (newAch.length > 0) setUnlockedAchievements(newAch);
+  }, [checkAndAwardAchievements]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
