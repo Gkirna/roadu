@@ -19,6 +19,7 @@ const navItems = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Library", url: "/library", icon: BookOpen },
   { title: "Progress", url: "/progress", icon: BarChart3 },
+  { title: "Achievements", url: "/achievements", icon: Award },
   { title: "Leaderboard", url: "/leaderboard", icon: Trophy },
   { title: "AI Tutor", url: "/tutor", icon: Bot },
   { title: "Profile", url: "/profile", icon: User },

@@ -43,6 +43,7 @@ function ProtectedRoutes() {
         <Route path="/book/:bookId" element={<BookChapters />} />
         <Route path="/chapter/:chapterId" element={<Reader />} />
         <Route path="/progress" element={<ProgressPage />} />
+        <Route path="/achievements" element={<Achievements />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/tutor" element={<AITutor />} />
         <Route path="/profile" element={<ProfilePage />} />
