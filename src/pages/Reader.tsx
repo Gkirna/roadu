@@ -21,6 +21,8 @@ export default function Reader() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
+  const { checkAndAwardAchievements } = useAchievements();
 
   useEffect(() => {
     if (!chapterId) return;
