@@ -13,7 +13,7 @@ interface Props {
   onCorrectAnswer?: () => void;
 }
 
-export default function ExerciseCard({ exercise }: Props) {
+export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
   const { user } = useAuth();
   const [selected, setSelected] = useState<string | null>(null);
   const [answer, setAnswer] = useState("");
