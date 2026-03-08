@@ -14,13 +14,385 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          title: string
+          xp_threshold: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          title: string
+          xp_threshold?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          title?: string
+          xp_threshold?: number | null
+        }
+        Relationships: []
+      }
+      books: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          difficulty: string
+          id: string
+          order_index: number
+          title: string
+          total_chapters: number
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          id?: string
+          order_index?: number
+          title: string
+          total_chapters?: number
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          id?: string
+          order_index?: number
+          title?: string
+          total_chapters?: number
+        }
+        Relationships: []
+      }
+      chapters: {
+        Row: {
+          book_id: string
+          created_at: string
+          description: string | null
+          id: string
+          order_index: number
+          title: string
+          total_pages: number
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_index?: number
+          title: string
+          total_pages?: number
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_index?: number
+          title?: string
+          total_pages?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_results: {
+        Row: {
+          exercise_id: string
+          id: string
+          is_correct: boolean
+          score: number | null
+          submitted_at: string
+          user_answer: string | null
+          user_id: string
+        }
+        Insert: {
+          exercise_id: string
+          id?: string
+          is_correct?: boolean
+          score?: number | null
+          submitted_at?: string
+          user_answer?: string | null
+          user_id: string
+        }
+        Update: {
+          exercise_id?: string
+          id?: string
+          is_correct?: boolean
+          score?: number | null
+          submitted_at?: string
+          user_answer?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_results_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercises: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          exercise_type: string
+          explanation: string | null
+          id: string
+          options: Json | null
+          page_id: string
+          question: string
+          xp_reward: number
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          exercise_type?: string
+          explanation?: string | null
+          id?: string
+          options?: Json | null
+          page_id: string
+          question: string
+          xp_reward?: number
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          exercise_type?: string
+          explanation?: string | null
+          id?: string
+          options?: Json | null
+          page_id?: string
+          question?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercises_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pages: {
+        Row: {
+          chapter_id: string
+          content: string | null
+          created_at: string
+          diagram_url: string | null
+          id: string
+          order_index: number
+          page_type: string
+          title: string
+        }
+        Insert: {
+          chapter_id: string
+          content?: string | null
+          created_at?: string
+          diagram_url?: string | null
+          id?: string
+          order_index?: number
+          page_type?: string
+          title: string
+        }
+        Update: {
+          chapter_id?: string
+          content?: string | null
+          created_at?: string
+          diagram_url?: string | null
+          id?: string
+          order_index?: number
+          page_type?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pages_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          id: string
+          level: number
+          streak_days: number
+          total_exercises_completed: number
+          total_pages_completed: number
+          updated_at: string
+          username: string | null
+          xp: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id: string
+          level?: number
+          streak_days?: number
+          total_exercises_completed?: number
+          total_pages_completed?: number
+          updated_at?: string
+          username?: string | null
+          xp?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          level?: number
+          streak_days?: number
+          total_exercises_completed?: number
+          total_pages_completed?: number
+          updated_at?: string
+          username?: string | null
+          xp?: number
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_activity: {
+        Row: {
+          activity_date: string
+          exercises_completed: number
+          id: string
+          pages_completed: number
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          activity_date?: string
+          exercises_completed?: number
+          id?: string
+          pages_completed?: number
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          activity_date?: string
+          exercises_completed?: number
+          id?: string
+          pages_completed?: number
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          id: string
+          page_id: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          page_id: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          page_id?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          avatar_url: string | null
+          id: string | null
+          level: number | null
+          rank: number | null
+          username: string | null
+          xp: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      add_xp: { Args: { p_user_id: string; p_xp: number }; Returns: undefined }
+      calculate_level: { Args: { user_xp: number }; Returns: number }
+      complete_page: {
+        Args: { p_page_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      submit_exercise: {
+        Args: { p_answer: string; p_exercise_id: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
