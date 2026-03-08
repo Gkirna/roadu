@@ -101,6 +101,15 @@ export default function Dashboard() {
         </Card>
       </motion.div>
 
+      {/* Streak Calendar */}
+      <motion.div variants={item}>
+        <Card className="border-border/50">
+          <CardContent className="p-5">
+            <StreakCalendar />
+          </CardContent>
+        </Card>
+      </motion.div>
+
       <div className="grid md:grid-cols-3 gap-6">
         {/* Continue Learning */}
         <motion.div variants={item} className="md:col-span-2">
