@@ -10,6 +10,7 @@ import type { Exercise } from "@/types/learning";
 
 interface Props {
   exercise: Exercise;
+  onCorrectAnswer?: () => void;
 }
 
 export default function ExerciseCard({ exercise }: Props) {
