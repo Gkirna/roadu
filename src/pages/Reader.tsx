@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useAchievements, type UnlockedAchievement } from "@/hooks/useAchievements";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +10,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, BookOpen, CheckCircle } from "lucid
 import { toast } from "sonner";
 import type { Page, Exercise } from "@/types/learning";
 import ExerciseCard from "@/components/ExerciseCard";
+import AchievementUnlock from "@/components/AchievementUnlock";
 
 export default function Reader() {
   const { chapterId } = useParams();
