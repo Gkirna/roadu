@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useAchievements, type UnlockedAchievement } from "@/hooks/useAchievements";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +10,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, BookOpen, CheckCircle } from "lucid
 import { toast } from "sonner";
 import type { Page, Exercise } from "@/types/learning";
 import ExerciseCard from "@/components/ExerciseCard";
+import AchievementUnlock from "@/components/AchievementUnlock";
 
 export default function Reader() {
   const { chapterId } = useParams();
@@ -19,6 +21,8 @@ export default function Reader() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
+  const { checkAndAwardAchievements } = useAchievements();
 
   useEffect(() => {
     if (!chapterId) return;
@@ -77,10 +81,18 @@ export default function Reader() {
       await supabase.rpc("complete_page", { p_user_id: user.id, p_page_id: currentPage.id });
       setCompleted((prev) => new Set(prev).add(currentPage.id));
       toast.success("+5 XP ⚡", { description: "Page completed!" });
+      // Check for new achievements
+      const newAch = await checkAndAwardAchievements();
+      if (newAch.length > 0) setUnlockedAchievements(newAch);
     } catch {
       toast.error("Failed to save progress");
     }
   };
+
+  const handleExerciseAchievementCheck = useCallback(async () => {
+    const newAch = await checkAndAwardAchievements();
+    if (newAch.length > 0) setUnlockedAchievements(newAch);
+  }, [checkAndAwardAchievements]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -226,7 +238,7 @@ export default function Reader() {
                 {/* Exercises */}
                 {(currentPage.page_type === "exercise" || currentPage.page_type === "quiz") &&
                   exercises[currentPage.id]?.map((ex) => (
-                    <ExerciseCard key={ex.id} exercise={ex} />
+                    <ExerciseCard key={ex.id} exercise={ex} onCorrectAnswer={handleExerciseAchievementCheck} />
                   ))}
 
                 {/* Complete button */}
@@ -255,6 +267,13 @@ export default function Reader() {
           Next <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
+      {/* Achievement unlock overlay */}
+      {unlockedAchievements.length > 0 && (
+        <AchievementUnlock
+          achievements={unlockedAchievements}
+          onDone={() => setUnlockedAchievements([])}
+        />
+      )}
     </div>
   );
 }

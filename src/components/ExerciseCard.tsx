@@ -10,9 +10,10 @@ import type { Exercise } from "@/types/learning";
 
 interface Props {
   exercise: Exercise;
+  onCorrectAnswer?: () => void;
 }
 
-export default function ExerciseCard({ exercise }: Props) {
+export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
   const { user } = useAuth();
   const [selected, setSelected] = useState<string | null>(null);
   const [answer, setAnswer] = useState("");
@@ -41,6 +42,7 @@ export default function ExerciseCard({ exercise }: Props) {
       setResult(isCorrect);
       if (isCorrect) {
         toast.success(`+${exercise.xp_reward} XP ⚡`, { description: "Correct answer!" });
+        onCorrectAnswer?.();
       } else {
         toast.error("Not quite right", { description: "Try reviewing the explanation" });
       }
