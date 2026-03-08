@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ChevronLeft, BookOpen, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import type { Page, Exercise } from "@/types/learning";
+import ReactMarkdown from "react-markdown";
 import ExerciseCard from "@/components/ExerciseCard";
 import AchievementUnlock from "@/components/AchievementUnlock";
 
@@ -222,8 +223,8 @@ export default function Reader() {
                 <h2 className="text-2xl font-bold text-foreground">{currentPage.title}</h2>
 
                 {currentPage.content && (
-                  <div className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                    {currentPage.content}
+                  <div className="text-foreground/90 leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown>{currentPage.content}</ReactMarkdown>
                   </div>
                 )}
 
