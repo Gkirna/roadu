@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function AppLayout({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <header className="h-14 flex items-center border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 px-4">
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-3">
+              <ThemeToggle />
               <span className="xp-badge">⚡ XP</span>
             </div>
           </header>
