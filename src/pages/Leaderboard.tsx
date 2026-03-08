@@ -1,32 +1,27 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 import type { LeaderboardEntry } from "@/types/learning";
+import { LeaderboardSkeleton } from "@/components/PageSkeleton";
 
 export default function Leaderboard() {
   const { user } = useAuth();
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
 
-  useEffect(() => {
-    supabase
-      .from("leaderboard")
-      .select("*")
-      .limit(10)
-      .then(({ data }) => {
-        if (data) {
-          const typed = data as unknown as LeaderboardEntry[];
-          setEntries(typed);
-          if (user) {
-            const me = typed.find((e) => e.id === user.id);
-            if (me) setMyRank(me);
-          }
-        }
-      });
-  }, [user]);
+  const { data: entries = [], isLoading } = useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: async () => {
+      const { data } = await supabase.from("leaderboard").select("*").limit(10);
+      return (data || []) as unknown as LeaderboardEntry[];
+    },
+    staleTime: 30_000,
+  });
+
+  const myRank = user ? entries.find((e) => e.id === user.id) ?? null : null;
+
+  if (isLoading) return <LeaderboardSkeleton />;
 
   const rankEmoji = (r: number) => {
     if (r === 1) return "🥇";

@@ -2,8 +2,13 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useProfile } from "@/hooks/useProfile";
+import { Zap } from "lucide-react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export function AppLayout({ children }: { children: ReactNode }) {
+  const { data: profile } = useProfile();
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -13,11 +18,15 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-3">
               <ThemeToggle />
-              <span className="xp-badge">⚡ XP</span>
+              <span className="xp-badge">
+                <Zap className="h-3.5 w-3.5" /> {profile?.xp ?? 0} XP
+              </span>
             </div>
           </header>
           <main className="flex-1 p-4 md:p-6 overflow-auto">
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
           </main>
         </div>
       </div>

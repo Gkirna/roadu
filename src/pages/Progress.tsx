@@ -1,23 +1,15 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
 import { BarChart3, BookOpen, CheckCircle } from "lucide-react";
-import type { Profile } from "@/types/learning";
 import { LEVEL_NAMES, LEVEL_THRESHOLDS } from "@/types/learning";
+import { ProfileSkeleton } from "@/components/PageSkeleton";
 
 export default function ProgressPage() {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { data: profile, isLoading } = useProfile();
 
-  useEffect(() => {
-    if (!user) return;
-    supabase.from("profiles").select("*").eq("id", user.id).single()
-      .then(({ data }) => { if (data) setProfile(data as unknown as Profile); });
-  }, [user]);
-
+  if (isLoading) return <ProfileSkeleton />;
   if (!profile) return null;
 
   const nextXp = LEVEL_THRESHOLDS[profile.level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
@@ -33,11 +25,8 @@ export default function ProgressPage() {
         <p className="text-muted-foreground mt-1">Track your learning journey</p>
       </motion.div>
 
-      {/* Level Progress */}
       <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle className="text-lg">Level Progress</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="text-lg">Level Progress</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="level-badge text-sm">Level {profile.level} — {LEVEL_NAMES[profile.level]}</span>
@@ -45,16 +34,13 @@ export default function ProgressPage() {
           </div>
           <Progress value={pct} className="h-3" />
           <div className="flex justify-between text-xs text-muted-foreground">
-            {LEVEL_THRESHOLDS.map((threshold, i) => (
-              <span key={i} className={profile.level > i ? "text-primary font-medium" : ""}>
-                Lv.{i + 1}
-              </span>
+            {LEVEL_THRESHOLDS.map((_, i) => (
+              <span key={i} className={profile.level > i ? "text-primary font-medium" : ""}>Lv.{i + 1}</span>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <Card className="border-border/50">
           <CardContent className="p-6 text-center">
