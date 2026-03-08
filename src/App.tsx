@@ -68,14 +68,16 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/auth" element={<AuthGate />} />
-              <Route path="/*" element={<ProtectedRoutes />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+          <ErrorBoundary>
+            <AuthProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/auth" element={<AuthGate />} />
+                  <Route path="/*" element={<ProtectedRoutes />} />
+                </Routes>
+              </BrowserRouter>
+            </AuthProvider>
+          </ErrorBoundary>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
