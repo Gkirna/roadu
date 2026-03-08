@@ -1,29 +1,15 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useProfile } from "@/hooks/useProfile";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
 import { Zap, Trophy, Flame, BookOpen, CheckCircle, Target } from "lucide-react";
 import { LEVEL_NAMES, LEVEL_THRESHOLDS } from "@/types/learning";
-import type { Profile } from "@/types/learning";
+import { ProfileSkeleton } from "@/components/PageSkeleton";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { data: profile, isLoading } = useProfile();
 
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single()
-      .then(({ data }) => {
-        if (data) setProfile(data as unknown as Profile);
-      });
-  }, [user]);
-
+  if (isLoading) return <ProfileSkeleton />;
   if (!profile) return null;
 
   const nextLevelXp = LEVEL_THRESHOLDS[profile.level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
@@ -35,7 +21,6 @@ export default function ProfilePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        {/* Profile Header */}
         <Card className="border-border/50 overflow-hidden">
           <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-secondary/20" />
           <CardContent className="p-6 -mt-8">
@@ -45,15 +30,9 @@ export default function ProfilePage() {
             <h2 className="text-2xl font-bold mt-3">{profile.username || "Learner"}</h2>
             <p className="text-muted-foreground text-sm">{profile.email}</p>
             <div className="flex items-center gap-3 mt-3">
-              <span className="level-badge">
-                <Trophy className="h-3.5 w-3.5" />
-                Level {profile.level} — {LEVEL_NAMES[profile.level]}
-              </span>
-              <span className="xp-badge">
-                <Zap className="h-3.5 w-3.5" /> {profile.xp} XP
-              </span>
+              <span className="level-badge"><Trophy className="h-3.5 w-3.5" /> Level {profile.level} — {LEVEL_NAMES[profile.level]}</span>
+              <span className="xp-badge"><Zap className="h-3.5 w-3.5" /> {profile.xp} XP</span>
             </div>
-
             <div className="mt-4">
               <div className="flex justify-between text-xs text-muted-foreground mb-1">
                 <span>Progress to Level {Math.min(profile.level + 1, 7)}</span>
@@ -65,7 +44,6 @@ export default function ProfilePage() {
         </Card>
       </motion.div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
         <Card className="border-border/50">
           <CardContent className="p-4 flex items-center gap-3">

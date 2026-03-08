@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,24 +12,24 @@ import { Search } from "lucide-react";
 import type { Book } from "@/types/learning";
 import { BOOK_EMOJIS } from "@/types/learning";
 import { useProgress } from "@/hooks/useProgress";
+import { LibrarySkeleton } from "@/components/PageSkeleton";
 
 const DIFFICULTIES = ["all", "beginner", "intermediate", "advanced"] as const;
 
 export default function Library() {
-  const [books, setBooks] = useState<Book[]>([]);
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState<string>("all");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase
-      .from("books")
-      .select("*")
-      .order("order_index")
-      .then(({ data }) => {
-        if (data) setBooks(data as unknown as Book[]);
-      });
-  }, []);
+  const { data: books = [], isLoading } = useQuery({
+    queryKey: ["books"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("books").select("*").order("order_index");
+      if (error) throw error;
+      return (data || []) as unknown as Book[];
+    },
+    staleTime: 60_000,
+  });
 
   const bookIds = useMemo(() => books.map((b) => b.id), [books]);
   const { books: bookProgress } = useProgress(bookIds);
@@ -43,12 +44,13 @@ export default function Library() {
     });
   }, [books, search, difficulty]);
 
-  // Map filtered books to their original index for emoji consistency
   const bookOriginalIndex = useMemo(() => {
     const map = new Map<string, number>();
     books.forEach((b, i) => map.set(b.id, i));
     return map;
   }, [books]);
+
+  if (isLoading) return <LibrarySkeleton />;
 
   const container = {
     hidden: { opacity: 0 },
@@ -75,26 +77,14 @@ export default function Library() {
         <p className="text-muted-foreground mt-1">Choose a book to start learning</p>
       </div>
 
-      {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search books..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
+          <Input placeholder="Search books..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex gap-1.5">
           {DIFFICULTIES.map((d) => (
-            <Button
-              key={d}
-              size="sm"
-              variant={difficulty === d ? "default" : "outline"}
-              onClick={() => setDifficulty(d)}
-              className="capitalize text-xs"
-            >
+            <Button key={d} size="sm" variant={difficulty === d ? "default" : "outline"} onClick={() => setDifficulty(d)} className="capitalize text-xs">
               {d}
             </Button>
           ))}
@@ -132,22 +122,14 @@ export default function Library() {
                   onClick={() => navigate(`/book/${book.id}`)}>
                   <div className="h-32 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center text-5xl relative">
                     {BOOK_EMOJIS[originalIdx % 10]}
-                    {percent === 100 && (
-                      <span className="absolute top-3 right-3 text-lg">✅</span>
-                    )}
+                    {percent === 100 && <span className="absolute top-3 right-3 text-lg">✅</span>}
                   </div>
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                        {book.title}
-                      </h3>
-                      <Badge variant="outline" className={`text-[10px] shrink-0 ${difficultyColor(book.difficulty)}`}>
-                        {book.difficulty}
-                      </Badge>
+                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">{book.title}</h3>
+                      <Badge variant="outline" className={`text-[10px] shrink-0 ${difficultyColor(book.difficulty)}`}>{book.difficulty}</Badge>
                     </div>
-                    {book.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">{book.description}</p>
-                    )}
+                    {book.description && <p className="text-sm text-muted-foreground line-clamp-2">{book.description}</p>}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">{book.total_chapters} chapters</span>
