@@ -44,7 +44,6 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
         toast.success(`+${exercise.xp_reward} XP ⚡`, { description: "Correct answer!" });
         onCorrectAnswer?.();
       } else {
-      } else {
         toast.error("Not quite right", { description: "Try reviewing the explanation" });
       }
     } catch {
