@@ -109,17 +109,29 @@ export default function Library() {
             <p className="text-muted-foreground mt-1">Books will appear here once content is added</p>
           </CardContent>
         </Card>
+      ) : filteredBooks.length === 0 ? (
+        <Card className="border-dashed border-2 border-border">
+          <CardContent className="p-12 text-center">
+            <p className="text-4xl mb-3">🔍</p>
+            <h3 className="text-lg font-semibold">No books found</h3>
+            <p className="text-muted-foreground mt-1 text-sm">Try a different search or filter</p>
+            <Button variant="ghost" size="sm" className="mt-3" onClick={() => { setSearch(""); setDifficulty("all"); }}>
+              Clear filters
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
         <motion.div variants={container} initial="hidden" animate="show" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {books.map((book, index) => {
+          {filteredBooks.map((book) => {
             const bp = bookProgress[book.id];
             const percent = bp?.percent ?? 0;
+            const originalIdx = bookOriginalIndex.get(book.id) ?? 0;
             return (
               <motion.div key={book.id} variants={item}>
                 <Card className="border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer group overflow-hidden"
                   onClick={() => navigate(`/book/${book.id}`)}>
                   <div className="h-32 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center text-5xl relative">
-                    {BOOK_EMOJIS[index % 10]}
+                    {BOOK_EMOJIS[originalIdx % 10]}
                     {percent === 100 && (
                       <span className="absolute top-3 right-3 text-lg">✅</span>
                     )}
