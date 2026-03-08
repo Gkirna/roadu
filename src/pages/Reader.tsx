@@ -238,7 +238,7 @@ export default function Reader() {
                 {/* Exercises */}
                 {(currentPage.page_type === "exercise" || currentPage.page_type === "quiz") &&
                   exercises[currentPage.id]?.map((ex) => (
-                    <ExerciseCard key={ex.id} exercise={ex} />
+                    <ExerciseCard key={ex.id} exercise={ex} onCorrectAnswer={handleExerciseAchievementCheck} />
                   ))}
 
                 {/* Complete button */}
