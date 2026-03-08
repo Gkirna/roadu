@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, ChevronLeft, BookOpen, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import type { Page, Exercise } from "@/types/learning";
+import ReactMarkdown from "react-markdown";
 import ExerciseCard from "@/components/ExerciseCard";
 import AchievementUnlock from "@/components/AchievementUnlock";
 
