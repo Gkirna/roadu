@@ -1,81 +1,78 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+interface ProgressEntry {
+  completed: number;
+  total: number;
+  percent: number;
+}
+
 interface ProgressMap {
-  /** chapterId → { completed, total, percent } */
-  chapters: Record<string, { completed: number; total: number; percent: number }>;
-  /** bookId → { completed, total, percent } */
-  books: Record<string, { completed: number; total: number; percent: number }>;
+  chapters: Record<string, ProgressEntry>;
+  books: Record<string, ProgressEntry>;
 }
 
 export function useProgress(bookIds?: string[], chapterIds?: string[]): ProgressMap {
   const { user } = useAuth();
-  const [progress, setProgress] = useState<ProgressMap>({ chapters: {}, books: {} });
 
-  useEffect(() => {
-    if (!user) return;
+  const { data: progress } = useQuery({
+    queryKey: ["progress", user?.id, bookIds?.join(",") ?? "", chapterIds?.join(",") ?? ""],
+    queryFn: async (): Promise<ProgressMap> => {
+      if (!user) return { chapters: {}, books: {} };
 
-    const fetchProgress = async () => {
-      // Get all pages for the requested scope
-      let pagesQuery = supabase.from("pages").select("id, chapter_id");
+      const chapterMap: Record<string, ProgressEntry> = {};
+      const bookMap: Record<string, ProgressEntry> = {};
 
+      // For chapter-level progress
       if (chapterIds && chapterIds.length > 0) {
-        pagesQuery = pagesQuery.in("chapter_id", chapterIds);
-      }
+        const { data: pages } = await supabase
+          .from("pages")
+          .select("id, chapter_id")
+          .in("chapter_id", chapterIds);
 
-      const { data: pages } = await pagesQuery;
-      if (!pages || pages.length === 0) {
-        setProgress({ chapters: {}, books: {} });
-        return;
-      }
+        if (pages && pages.length > 0) {
+          const pageIds = pages.map((p) => p.id);
+          const { data: completedPages } = await supabase
+            .from("user_progress")
+            .select("page_id")
+            .eq("user_id", user.id)
+            .eq("completed", true)
+            .in("page_id", pageIds);
 
-      const pageIds = pages.map((p) => p.id);
+          const completedSet = new Set((completedPages || []).map((cp) => cp.page_id));
 
-      // Get user's completed pages
-      const { data: completedPages } = await supabase
-        .from("user_progress")
-        .select("page_id")
-        .eq("user_id", user.id)
-        .eq("completed", true)
-        .in("page_id", pageIds);
-
-      const completedSet = new Set((completedPages || []).map((cp) => cp.page_id));
-
-      // Group by chapter
-      const chapterMap: Record<string, { completed: number; total: number; percent: number }> = {};
-      for (const page of pages) {
-        if (!chapterMap[page.chapter_id]) {
-          chapterMap[page.chapter_id] = { completed: 0, total: 0, percent: 0 };
+          for (const page of pages) {
+            if (!chapterMap[page.chapter_id]) {
+              chapterMap[page.chapter_id] = { completed: 0, total: 0, percent: 0 };
+            }
+            chapterMap[page.chapter_id].total++;
+            if (completedSet.has(page.id)) {
+              chapterMap[page.chapter_id].completed++;
+            }
+          }
+          for (const key of Object.keys(chapterMap)) {
+            const ch = chapterMap[key];
+            ch.percent = ch.total > 0 ? Math.round((ch.completed / ch.total) * 100) : 0;
+          }
         }
-        chapterMap[page.chapter_id].total++;
-        if (completedSet.has(page.id)) {
-          chapterMap[page.chapter_id].completed++;
-        }
-      }
-      for (const key of Object.keys(chapterMap)) {
-        const ch = chapterMap[key];
-        ch.percent = ch.total > 0 ? Math.round((ch.completed / ch.total) * 100) : 0;
       }
 
-      // For books: we need chapter→book mapping
-      let bookMap: Record<string, { completed: number; total: number; percent: number }> = {};
-
+      // For book-level progress
       if (bookIds && bookIds.length > 0) {
         const { data: chapters } = await supabase
           .from("chapters")
           .select("id, book_id")
           .in("book_id", bookIds);
 
-        if (chapters) {
-          // Get all pages for these chapters
+        if (chapters && chapters.length > 0) {
           const allChapterIds = chapters.map((c) => c.id);
           const { data: allPages } = await supabase
             .from("pages")
             .select("id, chapter_id")
             .in("chapter_id", allChapterIds);
 
-          if (allPages) {
+          if (allPages && allPages.length > 0) {
             const allPageIds = allPages.map((p) => p.id);
             const { data: allCompleted } = await supabase
               .from("user_progress")
@@ -86,7 +83,6 @@ export function useProgress(bookIds?: string[], chapterIds?: string[]): Progress
 
             const allCompletedSet = new Set((allCompleted || []).map((cp) => cp.page_id));
 
-            // Map chapter → book
             const chapterToBook: Record<string, string> = {};
             for (const ch of chapters) {
               chapterToBook[ch.id] = ch.book_id;
@@ -109,11 +105,11 @@ export function useProgress(bookIds?: string[], chapterIds?: string[]): Progress
         }
       }
 
-      setProgress({ chapters: chapterMap, books: bookMap });
-    };
+      return { chapters: chapterMap, books: bookMap };
+    },
+    enabled: !!user && ((!!bookIds && bookIds.length > 0) || (!!chapterIds && chapterIds.length > 0)),
+    staleTime: 30_000,
+  });
 
-    fetchProgress();
-  }, [user, bookIds?.join(","), chapterIds?.join(",")]);
-
-  return progress;
+  return progress ?? { chapters: {}, books: {} };
 }

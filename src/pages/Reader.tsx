@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAchievements, type UnlockedAchievement } from "@/hooks/useAchievements";
@@ -20,6 +20,7 @@ export default function Reader() {
   const { chapterId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
@@ -39,6 +40,35 @@ export default function Reader() {
     enabled: !!chapterId,
     staleTime: 60_000,
   });
+
+  // Load previously completed pages from DB
+  const { data: dbCompleted } = useQuery({
+    queryKey: ["page-completion", chapterId, user?.id],
+    queryFn: async () => {
+      if (!user || pages.length === 0) return [];
+      const pageIds = pages.map((p) => p.id);
+      const { data } = await supabase
+        .from("user_progress")
+        .select("page_id")
+        .eq("user_id", user.id)
+        .eq("completed", true)
+        .in("page_id", pageIds);
+      return (data || []).map((d) => d.page_id);
+    },
+    enabled: !!user && pages.length > 0,
+    staleTime: 30_000,
+  });
+
+  // Sync DB completed pages into local state
+  useEffect(() => {
+    if (dbCompleted && dbCompleted.length > 0) {
+      setCompleted((prev) => {
+        const next = new Set(prev);
+        for (const id of dbCompleted) next.add(id);
+        return next;
+      });
+    }
+  }, [dbCompleted]);
 
   const exercisePageIds = pages.filter((p) => p.page_type === "exercise" || p.page_type === "quiz").map((p) => p.id);
 
@@ -60,6 +90,14 @@ export default function Reader() {
 
   const currentPage = pages[currentIndex];
 
+  const invalidateCaches = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["profile"] });
+    queryClient.invalidateQueries({ queryKey: ["streak-calendar"] });
+    queryClient.invalidateQueries({ queryKey: ["continue-learning"] });
+    queryClient.invalidateQueries({ queryKey: ["progress"] });
+    queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+  }, [queryClient]);
+
   const goNext = useCallback(() => {
     if (currentIndex < pages.length - 1) { setDirection(1); setCurrentIndex((i) => i + 1); }
   }, [currentIndex, pages.length]);
@@ -74,6 +112,7 @@ export default function Reader() {
       await supabase.rpc("complete_page", { p_user_id: user.id, p_page_id: currentPage.id });
       setCompleted((prev) => new Set(prev).add(currentPage.id));
       toast.success("+5 XP ⚡", { description: "Page completed!" });
+      invalidateCaches();
       const newAch = await checkAndAwardAchievements();
       if (newAch.length > 0) setUnlockedAchievements(newAch);
     } catch {
@@ -81,10 +120,11 @@ export default function Reader() {
     }
   };
 
-  const handleExerciseAchievementCheck = useCallback(async () => {
+  const handleExerciseComplete = useCallback(async () => {
+    invalidateCaches();
     const newAch = await checkAndAwardAchievements();
     if (newAch.length > 0) setUnlockedAchievements(newAch);
-  }, [checkAndAwardAchievements]);
+  }, [checkAndAwardAchievements, invalidateCaches]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -184,7 +224,7 @@ export default function Reader() {
                 )}
                 {(currentPage.page_type === "exercise" || currentPage.page_type === "quiz") &&
                   exercises[currentPage.id]?.map((ex) => (
-                    <ExerciseCard key={ex.id} exercise={ex} onCorrectAnswer={handleExerciseAchievementCheck} />
+                    <ExerciseCard key={ex.id} exercise={ex} onCorrectAnswer={handleExerciseComplete} />
                   ))}
                 {!completed.has(currentPage.id) && (
                   <Button onClick={markComplete} variant="outline" size="sm" className="border-secondary/30 text-secondary hover:bg-secondary/10">
