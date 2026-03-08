@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Flame } from "lucide-react";
@@ -10,14 +10,10 @@ interface DayActivity {
 
 export default function StreakCalendar() {
   const { user } = useAuth();
-  const [days, setDays] = useState<DayActivity[]>([]);
-  const [streak, setStreak] = useState(0);
 
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchActivity = async () => {
-      // Get last 14 days
+  const { data } = useQuery({
+    queryKey: ["streak-calendar", user?.id],
+    queryFn: async () => {
       const today = new Date();
       const fourteenDaysAgo = new Date(today);
       fourteenDaysAgo.setDate(today.getDate() - 13);
@@ -27,18 +23,15 @@ export default function StreakCalendar() {
         supabase
           .from("user_activity")
           .select("activity_date")
-          .eq("user_id", user.id)
+          .eq("user_id", user!.id)
           .gte("activity_date", startDate),
-        supabase.from("profiles").select("streak_days").eq("id", user.id).single(),
+        supabase.from("profiles").select("streak_days").eq("id", user!.id).single(),
       ]);
 
       const activeDates = new Set(
         (activityRes.data || []).map((a) => a.activity_date)
       );
 
-      if (profileRes.data) setStreak(profileRes.data.streak_days);
-
-      // Build 14-day array
       const dayArray: DayActivity[] = [];
       for (let i = 13; i >= 0; i--) {
         const d = new Date(today);
@@ -46,11 +39,18 @@ export default function StreakCalendar() {
         const dateStr = d.toISOString().split("T")[0];
         dayArray.push({ date: dateStr, active: activeDates.has(dateStr) });
       }
-      setDays(dayArray);
-    };
 
-    fetchActivity();
-  }, [user]);
+      return {
+        days: dayArray,
+        streak: profileRes.data?.streak_days ?? 0,
+      };
+    },
+    enabled: !!user,
+    staleTime: 30_000,
+  });
+
+  const days = data?.days ?? [];
+  const streak = data?.streak ?? 0;
 
   const dayLabel = (dateStr: string) => {
     const d = new Date(dateStr + "T00:00:00");
@@ -70,9 +70,7 @@ export default function StreakCalendar() {
           <div key={day.date} className="flex flex-col items-center gap-1">
             <div
               className={`h-6 w-6 rounded-md transition-colors ${
-                day.active
-                  ? "bg-primary"
-                  : "bg-muted"
+                day.active ? "bg-primary" : "bg-muted"
               }`}
               title={day.date}
             />
