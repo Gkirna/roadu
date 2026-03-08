@@ -4,14 +4,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
 import type { Book } from "@/types/learning";
 import { BOOK_EMOJIS } from "@/types/learning";
 import { useProgress } from "@/hooks/useProgress";
 
+const DIFFICULTIES = ["all", "beginner", "intermediate", "advanced"] as const;
+
 export default function Library() {
   const [books, setBooks] = useState<Book[]>([]);
+  const [search, setSearch] = useState("");
+  const [difficulty, setDifficulty] = useState<string>("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +32,23 @@ export default function Library() {
 
   const bookIds = useMemo(() => books.map((b) => b.id), [books]);
   const { books: bookProgress } = useProgress(bookIds);
+
+  const filteredBooks = useMemo(() => {
+    return books.filter((book) => {
+      const matchesSearch = search === "" ||
+        book.title.toLowerCase().includes(search.toLowerCase()) ||
+        (book.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
+      const matchesDifficulty = difficulty === "all" || book.difficulty === difficulty;
+      return matchesSearch && matchesDifficulty;
+    });
+  }, [books, search, difficulty]);
+
+  // Map filtered books to their original index for emoji consistency
+  const bookOriginalIndex = useMemo(() => {
+    const map = new Map<string, number>();
+    books.forEach((b, i) => map.set(b.id, i));
+    return map;
+  }, [books]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -50,6 +73,32 @@ export default function Library() {
       <div>
         <h1 className="text-3xl font-bold text-foreground">📚 AI Engineering Library</h1>
         <p className="text-muted-foreground mt-1">Choose a book to start learning</p>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search books..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="flex gap-1.5">
+          {DIFFICULTIES.map((d) => (
+            <Button
+              key={d}
+              size="sm"
+              variant={difficulty === d ? "default" : "outline"}
+              onClick={() => setDifficulty(d)}
+              className="capitalize text-xs"
+            >
+              {d}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {books.length === 0 ? (
