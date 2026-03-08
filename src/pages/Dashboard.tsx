@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
-import { BookOpen, Flame, Trophy, Zap, ArrowRight } from "lucide-react";
+import { BookOpen, Trophy, Zap, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LEVEL_NAMES } from "@/types/learning";
 import type { Profile, LeaderboardEntry } from "@/types/learning";
+import StreakCalendar from "@/components/StreakCalendar";
 
 export default function Dashboard() {
   const { user } = useAuth();
