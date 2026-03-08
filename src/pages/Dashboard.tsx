@@ -90,12 +90,12 @@ export default function Dashboard() {
 
         <Card className="border-border/50">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--xp) / 0.1)" }}>
-              <BookOpen className="h-5 w-5" style={{ color: "hsl(var(--xp))" }} />
+            <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-muted">
+              <BookOpen className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{profile?.total_pages_completed || 0}</p>
-              <p className="text-xs text-muted-foreground">Pages Done</p>
+              <p className="text-2xl font-bold">{profile?.total_exercises_completed || 0}</p>
+              <p className="text-xs text-muted-foreground">Exercises</p>
             </div>
           </CardContent>
         </Card>
