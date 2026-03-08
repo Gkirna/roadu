@@ -13,6 +13,7 @@ import Reader from "./pages/Reader";
 import ProgressPage from "./pages/Progress";
 import Leaderboard from "./pages/Leaderboard";
 import AITutor from "./pages/AITutor";
+import Achievements from "./pages/Achievements";
 import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
