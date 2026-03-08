@@ -91,6 +91,25 @@ export default function Reader() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [goNext, goPrev]);
 
+  // Swipe gesture support
+  const touchStart = React.useRef<{ x: number; y: number } | null>(null);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, []);
+
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const dx = e.changedTouches[0].clientX - touchStart.current.x;
+    const dy = e.changedTouches[0].clientY - touchStart.current.y;
+    // Only trigger if horizontal swipe is dominant and > 50px
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) goNext();
+      else goPrev();
+    }
+    touchStart.current = null;
+  }, [goNext, goPrev]);
+
   const pageTypeIcon = (type: string) => {
     switch (type) {
       case "concept": return "💡";
