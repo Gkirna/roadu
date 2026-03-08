@@ -78,12 +78,12 @@ export default function Dashboard() {
 
         <Card className="border-border/50">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: "hsl(var(--streak) / 0.1)" }}>
-              <Flame className="h-5 w-5" style={{ color: "hsl(var(--streak))" }} />
+            <div className="h-10 w-10 rounded-lg flex items-center justify-center bg-muted">
+              <BookOpen className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{profile?.streak_days || 0}</p>
-              <p className="text-xs text-muted-foreground">Day Streak</p>
+              <p className="text-2xl font-bold">{profile?.total_pages_completed || 0}</p>
+              <p className="text-xs text-muted-foreground">Pages Done</p>
             </div>
           </CardContent>
         </Card>
