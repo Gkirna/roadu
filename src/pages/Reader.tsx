@@ -92,7 +92,7 @@ export default function Reader() {
   }, [goNext, goPrev]);
 
   // Swipe gesture support
-  const touchStart = React.useRef<{ x: number; y: number } | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
