@@ -11,6 +11,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, BookOpen, CheckCircle } from "lucid
 import { toast } from "sonner";
 import type { Page, Exercise } from "@/types/learning";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import ExerciseCard from "@/components/ExerciseCard";
 import AchievementUnlock from "@/components/AchievementUnlock";
 import { ReaderSkeleton } from "@/components/PageSkeleton";
