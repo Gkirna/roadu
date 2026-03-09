@@ -235,6 +235,39 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          paid_at: string | null
+          status: string
+          upi_transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          status?: string
+          upi_transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          status?: string
+          upi_transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -389,6 +422,7 @@ export type Database = {
         Args: { p_page_id: string; p_user_id: string }
         Returns: undefined
       }
+      has_active_subscription: { Args: { p_user_id: string }; Returns: boolean }
       submit_exercise: {
         Args: { p_answer: string; p_exercise_id: string; p_user_id: string }
         Returns: boolean
