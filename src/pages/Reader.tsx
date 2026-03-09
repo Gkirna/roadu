@@ -218,15 +218,15 @@ export default function Reader() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-3 h-full flex flex-col">
+      <div className="flex items-center justify-between px-1">
         <Button variant="ghost" size="sm" onClick={goBack} className="gap-1 text-muted-foreground">
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
-        <span className="text-sm text-muted-foreground">{currentIndex + 1} / {pages.length}</span>
+        <span className="text-sm text-muted-foreground font-medium">{currentIndex + 1} / {pages.length}</span>
       </div>
 
-      <div className="flex gap-1 justify-center">
+      <div className="flex gap-0.5 justify-center px-1">
         {pages.map((p, i) => (
           <div key={p.id} className={`h-1.5 rounded-full transition-all duration-300 ${
             i === currentIndex ? "w-6 bg-primary" : completed.has(p.id) ? "w-3 bg-secondary" : i < currentIndex ? "w-3 bg-primary/30" : "w-3 bg-border"
@@ -234,19 +234,47 @@ export default function Reader() {
         ))}
       </div>
 
-      <div className="relative min-h-[400px]" style={{ perspective: "1200px" }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div
+        className="relative flex-1 min-h-0"
+        style={{ perspective: "1800px" }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <AnimatePresence mode="wait" custom={direction}>
-          <motion.div key={currentIndex} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}>
-            <Card className="border-border/50 shadow-lg">
-              <CardContent className="p-6 md:p-10 lg:p-12 space-y-6">
+          <motion.div
+            key={currentIndex}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              duration: 0.5,
+              ease: [0.25, 0.46, 0.45, 0.94],
+              opacity: { duration: 0.3 },
+            }}
+            className="h-full"
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <Card className="border-border/30 shadow-xl h-full bg-card overflow-hidden"
+              style={{
+                boxShadow: "0 4px 40px -8px hsl(var(--foreground) / 0.1), 0 0 0 1px hsl(var(--border) / 0.5)",
+              }}
+            >
+              <CardContent className="p-6 md:p-10 lg:p-14 space-y-6 overflow-y-auto max-h-[calc(100vh-220px)]">
                 <div className="flex items-center gap-2">
                   <span className="text-3xl">{pageTypeIcon(currentPage.page_type)}</span>
                   <span className="text-sm uppercase tracking-wider text-muted-foreground font-medium">{currentPage.page_type}</span>
                   {completed.has(currentPage.id) && <CheckCircle className="h-5 w-5 text-secondary ml-auto" />}
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">{currentPage.title}</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">{currentPage.title}</h2>
                 {currentPage.content && (
-                  <div className="text-foreground/90 leading-relaxed prose prose-base md:prose-lg dark:prose-invert max-w-none">
+                  <div className="text-foreground/90 leading-relaxed prose prose-base md:prose-lg dark:prose-invert max-w-none
+                    prose-headings:text-foreground prose-p:text-foreground/85 prose-strong:text-foreground
+                    prose-pre:bg-foreground/5 prose-pre:border prose-pre:border-border/50 prose-pre:rounded-xl prose-pre:text-sm
+                    prose-code:text-primary prose-code:font-mono
+                    prose-table:text-sm prose-th:text-foreground prose-td:text-foreground/80
+                    prose-blockquote:border-primary/40 prose-blockquote:text-muted-foreground prose-blockquote:italic">
                     <ReactMarkdown>{currentPage.content}</ReactMarkdown>
                   </div>
                 )}
@@ -268,11 +296,11 @@ export default function Reader() {
         </AnimatePresence>
       </div>
 
-      <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0} className="gap-1">
+      <div className="flex items-center justify-between px-1 pb-2">
+        <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0} className="gap-1 px-6">
           <ArrowLeft className="h-4 w-4" /> Previous
         </Button>
-        <Button onClick={goNext} disabled={currentIndex === pages.length - 1} className="gap-1">
+        <Button onClick={goNext} disabled={currentIndex === pages.length - 1} className="gap-1 px-6">
           Next <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
