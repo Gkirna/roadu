@@ -25,8 +25,9 @@ const queryClient = new QueryClient();
 
 function ProtectedRoutes() {
   const { user, loading } = useAuth();
+  const { data: subscription, isLoading: subLoading } = useSubscription();
 
-  if (loading) {
+  if (loading || subLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-3">
@@ -38,6 +39,8 @@ function ProtectedRoutes() {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
+
+  if (!subscription?.active) return <Navigate to="/payment" replace />;
 
   return (
     <AppLayout>
