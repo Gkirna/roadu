@@ -276,7 +276,7 @@ export default function Reader() {
                     prose-code:text-primary prose-code:font-mono
                     prose-table:text-sm prose-th:text-foreground prose-td:text-foreground/80
                     prose-blockquote:border-primary/40 prose-blockquote:text-muted-foreground prose-blockquote:italic">
-                    <ReactMarkdown>{currentPage.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentPage.content}</ReactMarkdown>
                   </div>
                 )}
                 {currentPage.diagram_url && (
