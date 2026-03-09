@@ -1,4 +1,4 @@
-import { Home, BookOpen, BarChart3, Trophy, Award, Bot, User, LogOut } from "lucide-react";
+import { Home, BookOpen, BarChart3, Trophy, Award, Bot, User, LogOut, CreditCard } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -22,6 +22,7 @@ const navItems = [
   { title: "Achievements", url: "/achievements", icon: Award },
   { title: "Leaderboard", url: "/leaderboard", icon: Trophy },
   { title: "AI Tutor", url: "/tutor", icon: Bot },
+  { title: "Subscription", url: "/subscription", icon: CreditCard },
   { title: "Profile", url: "/profile", icon: User },
 ];
 

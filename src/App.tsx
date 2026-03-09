@@ -19,6 +19,7 @@ import Leaderboard from "./pages/Leaderboard";
 import AITutor from "./pages/AITutor";
 import Achievements from "./pages/Achievements";
 import ProfilePage from "./pages/Profile";
+import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ function ProtectedRoutes() {
         <Route path="/achievements" element={<Achievements />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/tutor" element={<AITutor />} />
+        <Route path="/subscription" element={<Subscription />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
