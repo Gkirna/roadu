@@ -38,7 +38,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>
             {!collapsed && (
               <span className="flex items-center gap-2 text-sm font-bold tracking-wide">
-                <span className="text-lg">🧠</span> GenAI Academy
+                <span className="text-lg">🧠</span> GAI
               </span>
             )}
             {collapsed && <span className="text-lg">🧠</span>}
