@@ -202,7 +202,7 @@ export default function Reader() {
 
   if (pages.length === 0) {
     return (
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="space-y-6">
         <Button variant="ghost" onClick={goBack} className="gap-2 text-muted-foreground">
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
