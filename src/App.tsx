@@ -5,11 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
-import { useSubscription } from "@/hooks/useSubscription";
 import { AppLayout } from "@/components/AppLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Auth from "./pages/Auth";
-import Payment from "./pages/Payment";
 import Dashboard from "./pages/Dashboard";
 import Library from "./pages/Library";
 import BookChapters from "./pages/BookChapters";
@@ -19,16 +17,14 @@ import Leaderboard from "./pages/Leaderboard";
 import AITutor from "./pages/AITutor";
 import Achievements from "./pages/Achievements";
 import ProfilePage from "./pages/Profile";
-import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 function ProtectedRoutes() {
   const { user, loading } = useAuth();
-  const { data: subscription, isLoading: subLoading } = useSubscription();
 
-  if (loading || subLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-3">
@@ -41,8 +37,6 @@ function ProtectedRoutes() {
 
   if (!user) return <Navigate to="/auth" replace />;
 
-  if (!subscription?.active) return <Navigate to="/payment" replace />;
-
   return (
     <AppLayout>
       <Routes>
@@ -54,7 +48,6 @@ function ProtectedRoutes() {
         <Route path="/achievements" element={<Achievements />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/tutor" element={<AITutor />} />
-        <Route path="/subscription" element={<Subscription />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -69,15 +62,6 @@ function AuthGate() {
   return <Auth />;
 }
 
-function PaymentGate() {
-  const { user, loading } = useAuth();
-  const { data: subscription, isLoading: subLoading } = useSubscription();
-  if (loading || subLoading) return null;
-  if (!user) return <Navigate to="/auth" replace />;
-  if (subscription?.active) return <Navigate to="/" replace />;
-  return <Payment />;
-}
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" storageKey="genai-theme">
@@ -89,7 +73,6 @@ const App = () => (
               <BrowserRouter>
                 <Routes>
                   <Route path="/auth" element={<AuthGate />} />
-                  <Route path="/payment" element={<PaymentGate />} />
                   <Route path="/*" element={<ProtectedRoutes />} />
                 </Routes>
               </BrowserRouter>
