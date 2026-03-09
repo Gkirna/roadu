@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, Lightbulb } from "lucide-react";
 import type { Exercise } from "@/types/learning";
+import { exerciseAnswerSchema } from "@/lib/validations";
+import { logAudit } from "@/lib/audit";
 
 interface Props {
   exercise: Exercise;
@@ -26,20 +28,27 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
   const handleSubmit = async () => {
     if (!user) return;
     const userAnswer = exercise.exercise_type === "multiple_choice" ? selected : answer;
-    if (!userAnswer) {
-      toast.error("Please select or type an answer");
+    
+    // Validate answer
+    const validation = exerciseAnswerSchema.safeParse({ answer: userAnswer ?? "" });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
       return;
     }
+
     setSubmitting(true);
     try {
       const { data, error } = await supabase.rpc("submit_exercise", {
         p_user_id: user.id,
         p_exercise_id: exercise.id,
-        p_answer: userAnswer,
+        p_answer: validation.data.answer,
       });
       if (error) throw error;
       const isCorrect = data as unknown as boolean;
       setResult(isCorrect);
+
+      logAudit("exercise.submit", "exercise", exercise.id, { isCorrect });
+
       if (isCorrect) {
         toast.success(`+${exercise.xp_reward} XP ⚡`, { description: "Correct answer!" });
         onCorrectAnswer?.();
@@ -93,6 +102,7 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
             onChange={(e) => setAnswer(e.target.value)}
             disabled={result !== null}
             placeholder="Type your answer..."
+            maxLength={500}
             className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-primary"
           />
         )}

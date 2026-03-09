@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { Bot, Send, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
+import { chatMessageSchema } from "@/lib/validations";
+import { logAudit } from "@/lib/audit";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -23,8 +25,14 @@ export default function AITutor() {
   }, [messages]);
 
   const send = async () => {
-    if (!input.trim() || loading) return;
-    const userMsg: Msg = { role: "user", content: input.trim() };
+    const validation = chatMessageSchema.safeParse({ content: input });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+    if (loading) return;
+
+    const userMsg: Msg = { role: "user", content: validation.data.content };
     setInput("");
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
@@ -53,6 +61,8 @@ export default function AITutor() {
         return;
       }
       if (!resp.ok || !resp.body) throw new Error("Stream failed");
+
+      logAudit("tutor.message", "chat", undefined, { messageCount: allMessages.length });
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
@@ -176,9 +186,10 @@ export default function AITutor() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about AI concepts..."
+              placeholder="Ask about AI concepts... (max 2000 chars)"
               disabled={loading}
               className="flex-1"
+              maxLength={2000}
             />
             <Button type="submit" disabled={loading || !input.trim()} size="icon">
               <Send className="h-4 w-4" />
