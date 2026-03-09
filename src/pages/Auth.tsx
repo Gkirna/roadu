@@ -51,7 +51,7 @@ export default function Auth() {
       >
         <div className="text-center mb-8">
           <span className="text-5xl mb-4 block">🧠</span>
-          <h1 className="text-3xl font-bold text-foreground">GenAI Academy</h1>
+          <h1 className="text-3xl font-bold text-foreground">GAI</h1>
           <p className="text-muted-foreground mt-2">Master Generative AI Engineering</p>
         </div>
 
