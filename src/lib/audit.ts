@@ -13,7 +13,7 @@ export async function logAudit(
   action: AuditAction,
   resourceType?: string,
   resourceId?: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, string | number | boolean | null>
 ) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
