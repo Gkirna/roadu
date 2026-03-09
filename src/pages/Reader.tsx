@@ -176,9 +176,24 @@ export default function Reader() {
   };
 
   const variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0, rotateY: dir > 0 ? -10 : 10 }),
-    center: { x: 0, opacity: 1, rotateY: 0 },
-    exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0, rotateY: dir > 0 ? 10 : -10 }),
+    enter: (dir: number) => ({
+      rotateY: dir > 0 ? 90 : -90,
+      opacity: 0,
+      scale: 0.95,
+      transformOrigin: dir > 0 ? "left center" : "right center",
+    }),
+    center: {
+      rotateY: 0,
+      opacity: 1,
+      scale: 1,
+      transformOrigin: "center center",
+    },
+    exit: (dir: number) => ({
+      rotateY: dir > 0 ? -90 : 90,
+      opacity: 0,
+      scale: 0.95,
+      transformOrigin: dir > 0 ? "right center" : "left center",
+    }),
   };
 
   if (pagesLoading) return <ReaderSkeleton />;
