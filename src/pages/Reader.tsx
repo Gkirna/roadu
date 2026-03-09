@@ -27,6 +27,20 @@ export default function Reader() {
   const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
   const { checkAndAwardAchievements } = useAchievements();
 
+  const { data: chapter } = useQuery({
+    queryKey: ["chapter-info", chapterId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("chapters")
+        .select("book_id, title")
+        .eq("id", chapterId!)
+        .single();
+      return data;
+    },
+    enabled: !!chapterId,
+    staleTime: 60_000,
+  });
+
   const { data: pages = [], isLoading: pagesLoading } = useQuery({
     queryKey: ["pages", chapterId],
     queryFn: async () => {
