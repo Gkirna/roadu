@@ -64,7 +64,7 @@ function AuthGate() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="light" storageKey="genai-theme">
+    <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" storageKey="genai-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />
