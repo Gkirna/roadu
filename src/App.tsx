@@ -54,6 +54,7 @@ function ProtectedRoutes() {
         <Route path="/achievements" element={<Achievements />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/tutor" element={<AITutor />} />
+        <Route path="/subscription" element={<Subscription />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
