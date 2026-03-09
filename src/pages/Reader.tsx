@@ -186,8 +186,7 @@ export default function Reader() {
   if (pages.length === 0) {
     return (
     <div className="max-w-5xl mx-auto space-y-6">
-        <Button variant="ghost" onClick={() => navigate(chapter?.book_id ? `/book/${chapter.book_id}` : "/library")} className="gap-2 text-muted-foreground">
-          <ChevronLeft className="h-4 w-4" /> Back
+        <Button variant="ghost" onClick={() => navigate(chapter?.book_id ? `/book/${chapter.book_id}` : "/library"hevronLeft className="h-4 w-4" /> Back
         </Button>
         <Card className="border-dashed border-2">
           <CardContent className="p-12 text-center">
@@ -203,8 +202,7 @@ export default function Reader() {
   return (
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <Bchapter?.book_id ? `/book/${chapter.book_id}` : "/library"ton variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-1 text-muted-foreground">
-          <ChevronLeft className="h-4 w-4" /> Back
+        <Bchapter?.book_id ? `/book/${chapter.book_id}` : "/librarutton variant="ghost" size="sm" onClick={() => navigate(chapter?.book_id ? `/book/${chapter.book_id}` : "/library"hevronLeft className="h-4 w-4" /> Back
         </Button>
         <span className="text-sm text-muted-foreground">{currentIndex + 1} / {pages.length}</span>
       </div>
