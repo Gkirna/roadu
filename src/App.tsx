@@ -87,6 +87,7 @@ const App = () => (
               <BrowserRouter>
                 <Routes>
                   <Route path="/auth" element={<AuthGate />} />
+                  <Route path="/payment" element={<PaymentGate />} />
                   <Route path="/*" element={<ProtectedRoutes />} />
                 </Routes>
               </BrowserRouter>
