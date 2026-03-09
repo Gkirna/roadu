@@ -171,7 +171,7 @@ export default function Reader() {
 
   if (pages.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
         <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2 text-muted-foreground">
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
@@ -187,7 +187,7 @@ export default function Reader() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4">
+    <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-1 text-muted-foreground">
           <ChevronLeft className="h-4 w-4" /> Back
@@ -207,15 +207,15 @@ export default function Reader() {
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div key={currentIndex} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}>
             <Card className="border-border/50 shadow-lg">
-              <CardContent className="p-6 md:p-8 space-y-4">
+              <CardContent className="p-6 md:p-10 lg:p-12 space-y-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">{pageTypeIcon(currentPage.page_type)}</span>
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">{currentPage.page_type}</span>
-                  {completed.has(currentPage.id) && <CheckCircle className="h-4 w-4 text-secondary ml-auto" />}
+                  <span className="text-3xl">{pageTypeIcon(currentPage.page_type)}</span>
+                  <span className="text-sm uppercase tracking-wider text-muted-foreground font-medium">{currentPage.page_type}</span>
+                  {completed.has(currentPage.id) && <CheckCircle className="h-5 w-5 text-secondary ml-auto" />}
                 </div>
-                <h2 className="text-2xl font-bold text-foreground">{currentPage.title}</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground">{currentPage.title}</h2>
                 {currentPage.content && (
-                  <div className="text-foreground/90 leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+                  <div className="text-foreground/90 leading-relaxed prose prose-base md:prose-lg dark:prose-invert max-w-none">
                     <ReactMarkdown>{currentPage.content}</ReactMarkdown>
                   </div>
                 )}
