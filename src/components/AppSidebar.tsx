@@ -1,4 +1,4 @@
-import { Home, BookOpen, BarChart3, Trophy, Award, Bot, User, LogOut } from "lucide-react";
+import { Home, BookOpen, BarChart3, Trophy, Award, Bot, User, LogOut, CreditCard } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
