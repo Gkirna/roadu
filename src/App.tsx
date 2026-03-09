@@ -67,6 +67,15 @@ function AuthGate() {
   return <Auth />;
 }
 
+function PaymentGate() {
+  const { user, loading } = useAuth();
+  const { data: subscription, isLoading: subLoading } = useSubscription();
+  if (loading || subLoading) return null;
+  if (!user) return <Navigate to="/auth" replace />;
+  if (subscription?.active) return <Navigate to="/" replace />;
+  return <Payment />;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" storageKey="genai-theme">
