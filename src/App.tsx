@@ -19,6 +19,7 @@ import Leaderboard from "./pages/Leaderboard";
 import AITutor from "./pages/AITutor";
 import Achievements from "./pages/Achievements";
 import ProfilePage from "./pages/Profile";
+import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
