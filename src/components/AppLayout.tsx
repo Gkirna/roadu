@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { SubscriptionAlert } from "@/components/SubscriptionAlert";
 import { useProfile } from "@/hooks/useProfile";
 import { Zap } from "lucide-react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -22,7 +21,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </span>
             </div>
           </header>
-          <SubscriptionAlert />
           <main className="flex-1 p-4 md:p-6 overflow-auto">
             <ErrorBoundary>
               {children}
