@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { loginSchema, signupSchema } from "@/lib/validations";
+import { logAudit } from "@/lib/audit";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,27 +14,46 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setErrors({});
 
+    // Validate inputs
+    const schema = isLogin ? loginSchema : signupSchema;
+    const input = isLogin ? { email, password } : { email, password, username };
+    const result = schema.safeParse(input);
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as string;
+        if (!fieldErrors[field]) fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
         toast.success("Welcome back! 🎉");
+        logAudit("auth.login");
       } else {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
-            data: { username },
+            data: { username: username.trim() },
             emailRedirectTo: window.location.origin,
           },
         });
         if (error) throw error;
         toast.success("Account created! Check your email to verify.");
+        logAudit("auth.signup");
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -65,28 +86,45 @@ export default function Auth() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
-                <Input
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required={!isLogin}
-                />
+                <div>
+                  <Input
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className={errors.username ? "border-destructive" : ""}
+                    autoComplete="username"
+                  />
+                  {errors.username && (
+                    <p className="text-xs text-destructive mt-1">{errors.username}</p>
+                  )}
+                </div>
               )}
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={errors.email ? "border-destructive" : ""}
+                  autoComplete="email"
+                />
+                {errors.email && (
+                  <p className="text-xs text-destructive mt-1">{errors.email}</p>
+                )}
+              </div>
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Password (min 8 characters)"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={errors.password ? "border-destructive" : ""}
+                  autoComplete={isLogin ? "current-password" : "new-password"}
+                />
+                {errors.password && (
+                  <p className="text-xs text-destructive mt-1">{errors.password}</p>
+                )}
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
               </Button>
@@ -94,7 +132,7 @@ export default function Auth() {
             <div className="mt-4 text-center">
               <button
                 type="button"
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => { setIsLogin(!isLogin); setErrors({}); }}
                 className="text-sm text-primary hover:underline"
               >
                 {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
