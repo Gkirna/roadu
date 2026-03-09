@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Auth from "./pages/Auth";
+import Payment from "./pages/Payment";
 import Dashboard from "./pages/Dashboard";
 import Library from "./pages/Library";
 import BookChapters from "./pages/BookChapters";
