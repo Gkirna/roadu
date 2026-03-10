@@ -276,7 +276,9 @@ export default function Reader() {
                     prose-code:text-primary prose-code:font-mono
                     prose-table:text-sm prose-th:text-foreground prose-th:bg-muted/50 prose-th:px-4 prose-th:py-2 prose-td:text-foreground/80 prose-td:px-4 prose-td:py-2 prose-table:border prose-table:border-border prose-table:rounded-lg prose-table:overflow-hidden
                     prose-blockquote:border-primary/40 prose-blockquote:text-muted-foreground prose-blockquote:italic">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentPage.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{
+                      currentPage.content.replace(/^#\s+.+\n+/, "")
+                    }</ReactMarkdown>
                   </div>
                 )}
                 {currentPage.diagram_url && (

@@ -10,6 +10,8 @@ import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { chatMessageSchema } from "@/lib/validations";
 import { logAudit } from "@/lib/audit";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -20,6 +22,7 @@ export default function AITutor() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,6 +36,11 @@ export default function AITutor() {
     }
     if (loading) return;
 
+    if (!user) {
+      toast.error("Please sign in to use the AI Tutor");
+      return;
+    }
+
     const userMsg: Msg = { role: "user", content: validation.data.content };
     setInput("");
     setMessages((prev) => [...prev, userMsg]);
@@ -42,11 +50,21 @@ export default function AITutor() {
     const allMessages = [...messages, userMsg];
 
     try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) {
+        toast.error("Session expired. Please sign in again.");
+        setLoading(false);
+        return;
+      }
+
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ messages: allMessages }),
       });
@@ -58,6 +76,11 @@ export default function AITutor() {
       }
       if (resp.status === 402) {
         toast.error("AI credits exhausted.");
+        setLoading(false);
+        return;
+      }
+      if (resp.status === 401) {
+        toast.error("Please sign in to use the AI Tutor.");
         setLoading(false);
         return;
       }
