@@ -151,7 +151,7 @@ export function ChatArea({ conversationId, initialMessages, onMessageSent, onFir
   return (
     <div className="flex-1 flex flex-col min-w-0">
       <ScrollArea className="flex-1 p-4 md:p-6">
-        <div className="space-y-4 max-w-4xl mx-auto">
+        <div className="space-y-4">
           {messages.length === 0 && (
             <div className="text-center py-20 text-muted-foreground">
               <Bot className="h-14 w-14 mx-auto mb-4 opacity-30" />
