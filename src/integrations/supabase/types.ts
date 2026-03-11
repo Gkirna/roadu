@@ -586,7 +586,7 @@ export type Database = {
       }
       submit_exercise: {
         Args: { p_answer: string; p_exercise_id: string; p_user_id: string }
-        Returns: boolean
+        Returns: Json
       }
       update_streak: { Args: { p_user_id: string }; Returns: number }
     }
