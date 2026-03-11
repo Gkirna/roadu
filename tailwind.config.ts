@@ -66,7 +66,9 @@ export default {
           foreground: "hsl(var(--success-foreground))",
         },
         xp: "hsl(var(--xp))",
-        streak: "hsl(var(--streak))",
+        streak: {
+          DEFAULT: "hsl(var(--streak))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -70,7 +70,7 @@ export default function StreakCalendar() {
           <div key={day.date} className="flex flex-col items-center gap-1">
             <div
               className={`h-6 w-6 rounded-md transition-colors ${
-                day.active ? "bg-primary" : "bg-muted"
+                day.active ? "bg-streak" : "bg-muted"
               }`}
               title={day.date}
             />
