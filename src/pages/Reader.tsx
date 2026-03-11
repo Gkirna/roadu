@@ -91,7 +91,7 @@ export default function Reader() {
     queryKey: ["exercises", chapterId, exercisePageIds.join(",")],
     queryFn: async () => {
       if (exercisePageIds.length === 0) return {};
-      const { data } = await supabase.from("exercises").select("*").in("page_id", exercisePageIds);
+      const { data } = await supabase.from("exercises").select("id, page_id, question, exercise_type, options, explanation, xp_reward").in("page_id", exercisePageIds);
       const grouped: Record<string, Exercise[]> = {};
       ((data || []) as unknown as Exercise[]).forEach((ex) => {
         if (!grouped[ex.page_id]) grouped[ex.page_id] = [];

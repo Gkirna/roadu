@@ -20,6 +20,7 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<boolean | null>(null);
+  const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -29,7 +30,6 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
     if (!user) return;
     const userAnswer = exercise.exercise_type === "multiple_choice" ? selected : answer;
     
-    // Validate answer
     const validation = exerciseAnswerSchema.safeParse({ answer: userAnswer ?? "" });
     if (!validation.success) {
       toast.error(validation.error.errors[0].message);
@@ -44,8 +44,10 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
         p_answer: validation.data.answer,
       });
       if (error) throw error;
-      const isCorrect = data as unknown as boolean;
+      const response = data as unknown as { is_correct: boolean; correct_answer: string };
+      const isCorrect = response.is_correct;
       setResult(isCorrect);
+      setCorrectAnswer(response.correct_answer);
 
       logAudit("exercise.submit", "exercise", exercise.id, { isCorrect });
 
@@ -78,12 +80,12 @@ export default function ExerciseCard({ exercise, onCorrectAnswer }: Props) {
                   selected === opt
                     ? result === null
                       ? "border-primary bg-primary/10 text-primary"
-                      : result && opt === exercise.correct_answer
+                      : result && opt === correctAnswer
                       ? "border-secondary bg-secondary/10 text-secondary"
                       : opt === selected && !result
                       ? "border-destructive bg-destructive/10 text-destructive"
                       : "border-border"
-                    : result !== null && opt === exercise.correct_answer
+                    : result !== null && opt === correctAnswer
                     ? "border-secondary bg-secondary/10 text-secondary"
                     : "border-border hover:border-primary/30 hover:bg-primary/5"
                 }`}
