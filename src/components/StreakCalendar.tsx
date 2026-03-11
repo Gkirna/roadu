@@ -60,7 +60,7 @@ export default function StreakCalendar() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Flame className="h-5 w-5 text-destructive" />
+        <Flame className="h-5 w-5 text-streak" />
         <span className="text-2xl font-bold text-foreground">{streak}</span>
         <span className="text-sm text-muted-foreground">day streak</span>
       </div>
@@ -70,7 +70,7 @@ export default function StreakCalendar() {
           <div key={day.date} className="flex flex-col items-center gap-1">
             <div
               className={`h-6 w-6 rounded-md transition-colors ${
-                day.active ? "bg-primary" : "bg-muted"
+                day.active ? "bg-streak" : "bg-muted"
               }`}
               title={day.date}
             />
