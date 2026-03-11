@@ -181,13 +181,6 @@ export type Database = {
             referencedRelation: "exercises"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       exercises: {
@@ -544,47 +537,6 @@ export type Database = {
       }
     }
     Views: {
-      exercises_public: {
-        Row: {
-          created_at: string | null
-          exercise_type: string | null
-          explanation: string | null
-          id: string | null
-          options: Json | null
-          page_id: string | null
-          question: string | null
-          xp_reward: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          exercise_type?: string | null
-          explanation?: string | null
-          id?: string | null
-          options?: Json | null
-          page_id?: string | null
-          question?: string | null
-          xp_reward?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          exercise_type?: string | null
-          explanation?: string | null
-          id?: string | null
-          options?: Json | null
-          page_id?: string | null
-          question?: string | null
-          xp_reward?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercises_page_id_fkey"
-            columns: ["page_id"]
-            isOneToOne: false
-            referencedRelation: "pages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       leaderboard: {
         Row: {
           avatar_url: string | null
