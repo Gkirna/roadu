@@ -34,7 +34,6 @@ export interface Exercise {
   question: string;
   exercise_type: string;
   options: string[] | null;
-  correct_answer: string;
   explanation: string | null;
   xp_reward: number;
 }
