@@ -113,9 +113,11 @@ export default function Reader() {
     queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
   }, [queryClient]);
 
+  const canGoNext = currentPage ? completed.has(currentPage.id) : false;
+
   const goNext = useCallback(() => {
-    if (currentIndex < pages.length - 1) { setDirection(1); setCurrentIndex((i) => i + 1); }
-  }, [currentIndex, pages.length]);
+    if (canGoNext && currentIndex < pages.length - 1) { setDirection(1); setCurrentIndex((i) => i + 1); }
+  }, [currentIndex, pages.length, canGoNext]);
 
   const goPrev = useCallback(() => {
     if (currentIndex > 0) { setDirection(-1); setCurrentIndex((i) => i - 1); }
