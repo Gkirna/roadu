@@ -130,6 +130,10 @@ export default function Reader() {
       invalidateCaches();
       const newAch = await checkAndAwardAchievements();
       if (newAch.length > 0) setUnlockedAchievements(newAch);
+      // Auto-advance to next page
+      if (currentIndex < pages.length - 1) {
+        setTimeout(() => { setDirection(1); setCurrentIndex((i) => i + 1); }, 400);
+      }
     } catch {
       toast.error("Failed to save progress");
     }
