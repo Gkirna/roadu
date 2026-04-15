@@ -307,7 +307,12 @@ export default function Reader() {
         <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0} className="gap-1 px-6">
           <ArrowLeft className="h-4 w-4" /> Previous
         </Button>
-        <Button onClick={goNext} disabled={currentIndex === pages.length - 1} className="gap-1 px-6">
+        <Button
+          onClick={goNext}
+          disabled={currentIndex === pages.length - 1 || (currentPage && !completed.has(currentPage.id))}
+          className="gap-1 px-6"
+          title={currentPage && !completed.has(currentPage.id) ? "Complete this page first" : undefined}
+        >
           Next <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
