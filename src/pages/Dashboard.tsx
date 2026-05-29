@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { LEVEL_NAMES } from "@/types/learning";
 import type { LeaderboardEntry } from "@/types/learning";
 import StreakCalendar from "@/components/StreakCalendar";
+import NoticeBoard from "@/components/NoticeBoard";
 import { DashboardSkeleton } from "@/components/PageSkeleton";
 
 interface ContinueLearning {
@@ -188,7 +189,12 @@ export default function Dashboard() {
         </Card>
       </motion.div>
 
+      <motion.div variants={item}>
+        <NoticeBoard />
+      </motion.div>
+
       <div className="grid md:grid-cols-3 gap-6">
+
         {/* Continue Learning - Dynamic */}
         <motion.div variants={item} className="md:col-span-2">
           <Card className="border-border/50 overflow-hidden">
