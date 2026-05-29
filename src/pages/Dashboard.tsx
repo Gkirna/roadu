@@ -189,7 +189,12 @@ export default function Dashboard() {
         </Card>
       </motion.div>
 
+      <motion.div variants={item}>
+        <NoticeBoard />
+      </motion.div>
+
       <div className="grid md:grid-cols-3 gap-6">
+
         {/* Continue Learning - Dynamic */}
         <motion.div variants={item} className="md:col-span-2">
           <Card className="border-border/50 overflow-hidden">
