@@ -1,51 +1,52 @@
+## Plan: Beef up "Machine Learning Foundations" + Add Dashboard Notice Board
 
+### Why
+- The **Machine Learning Foundations** book currently has only **13 pages and 4 exercises** spread across 5 chapters — much thinner than peers like Deep Learning (23 pages) or Agentic Frameworks (40 pages). It feels incomplete.
+- The user also wants a **notice board** on the dashboard to announce app updates (e.g., "ML concepts updated").
 
-## Plan: Bulk Content Expansion for Thin Books
+Nothing else gets touched — same theme, same auth, same gamification, no schema changes.
 
-### Problem
-8 of 11 books have very thin content, making the platform feel incomplete:
+---
 
-| Book | Pages | Exercises |
-|------|-------|-----------|
-| Deep Learning | 6 | 1 |
-| NLP | 6 | 1 |
-| Transformers & LLMs | 6 | 1 |
-| Prompt Engineering | 6 | 1 |
-| RAG Systems | 5 | 0 |
-| AI Agents | 5 | 0 |
-| MCP Systems | 5 | 0 |
-| AI Deployment | 5 | 0 |
+### Part 1 — Expand the ML Foundations book
 
-Each book needs ~20-25 pages and 8-10 exercises to feel substantial and provide enough XP for users to reach the 5000+ XP milestones.
+Add **~12 new pages** (bringing the book to ~25 pages, 4–6 per chapter) and **~6 new multiple-choice exercises** (bringing it to ~10 total). Follow existing rules from project memory: simple English, no code, real-world examples, theoretical focus, 1–2 inline diagrams per page.
 
-### What Will Be Added
+**New content distribution (added to existing 5 chapters):**
 
-For each of the 8 thin books, I will create a SQL migration that inserts:
-- **~20 pages per book** (4 pages per chapter × 5 chapters) with full markdown content
-- **8-10 multiple-choice exercises per book** spread across chapters
-- Content follows existing rules: simple English, no code snippets, real-world examples, theoretical focus
+| Chapter | New pages | New topics |
+|---|---|---|
+| Pattern Recognition | +2 | Features vs labels, How models "see" data |
+| Supervised Learning | +3 | Regression vs classification, Train/test split, Overfitting & underfitting |
+| Unsupervised Learning | +3 | Clustering with real examples, Dimensionality reduction, Anomaly detection |
+| Reinforcement Learning | +2 | Reward signals in daily life, Exploration vs exploitation |
+| Real ML Products | +2 | Netflix recommendations deep-dive, Fraud detection systems |
 
-**Estimated new content**: ~160 pages + ~70 exercises
-**Estimated new XP available**: ~160 × 5 (pages) + ~70 × 20 (exercises) = ~2,200 additional XP
+**New exercises (6 total):** one per chapter on the most important concept, plus an extra in Supervised Learning (overfitting trap question).
 
-### Content Topics Per Book
+**XP impact:** ~12 pages × 5 XP + 6 exercises × 20 XP = **~180 additional XP** available, keeping the book proportional to its peers.
 
-1. **Deep Learning** — Neural networks, layers, activation functions, CNNs, RNNs, training, overfitting, transfer learning
-2. **NLP** — Tokenization, embeddings, sentiment analysis, NER, text classification, chatbots, translation
-3. **Transformers & LLMs** — Attention mechanism, encoder-decoder, GPT/BERT/LLaMA, fine-tuning, scaling laws, context windows
-4. **Prompt Engineering** — Zero/few-shot, chain-of-thought, system prompts, prompt templates, guardrails, evaluation
-5. **RAG Systems** — Vector databases, embeddings, chunking, retrieval, hybrid search, reranking, RAG pipelines
-6. **AI Agents** — Autonomous systems, planning, tool use, memory, ReAct pattern, agent loops, multi-step reasoning
-7. **MCP Systems** — Model Context Protocol, tool calling, server architecture, security, real-world integrations
-8. **AI Deployment** — APIs, containers, cloud platforms, monitoring, scaling, A/B testing, cost optimization
+### Part 2 — Notice Board widget on Dashboard
+
+A new card titled **"📢 What's New"** placed on the Dashboard, between the streak calendar and the "Continue Learning" row. Shows the latest 3 announcements with:
+- Title (bold)
+- One-line description
+- Relative date ("2 days ago")
+- A small "NEW" badge for items < 7 days old
+
+**For now, the only announcement is:**
+> **Machine Learning Foundations expanded** — New chapters added with deeper concepts, real-world examples, and fresh exercises. Dive in and earn extra XP!
 
 ### Technical Approach
 
-- Single large SQL migration file inserting pages and exercises for all 8 books
-- Uses existing chapter UUIDs (queried from DB) to link pages correctly
-- Updates `total_pages` on chapters and `total_chapters` on books if needed
-- All exercises are multiple-choice with 4 options, explanations, and 20 XP reward
+- **Content:** one SQL `INSERT` batch (via the insert/data tool, not a migration) adding pages + exercises to existing chapter UUIDs. Updates `total_pages` on the 5 chapters. No schema change.
+- **Notice board:** hardcoded array in a new `src/components/NoticeBoard.tsx` component for the MVP — simple, no DB table needed yet. Easy to swap to a Supabase-backed table later when announcements become frequent.
+- Uses existing design tokens (cream/ivory theme, large typography, framer-motion entrance). Fully responsive on the current 1336px viewport and mobile.
 
 ### Files Changed
-- `supabase/migrations/` — One new migration file with all content inserts
+- `src/components/NoticeBoard.tsx` — new component
+- `src/pages/Dashboard.tsx` — render NoticeBoard
+- Database — data inserts only (pages + exercises + chapter page-count updates)
 
+### Out of scope
+- No new tables, no auth changes, no changes to other books, no theme changes.
