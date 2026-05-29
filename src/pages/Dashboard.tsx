@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { LEVEL_NAMES } from "@/types/learning";
 import type { LeaderboardEntry } from "@/types/learning";
 import StreakCalendar from "@/components/StreakCalendar";
+import NoticeBoard from "@/components/NoticeBoard";
 import { DashboardSkeleton } from "@/components/PageSkeleton";
 
 interface ContinueLearning {
